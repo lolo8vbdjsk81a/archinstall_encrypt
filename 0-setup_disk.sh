@@ -1,5 +1,6 @@
 #!/bin/bash
 # This script installs an arch linux system with full disk encryption.
+SCRIPT_URL="https://raw.githubusercontent.com/lolo8vbdjsk81a/archinstall_encrypt/main/"
 
 echo -ne "\nPlease make sure you have internet connection with configured disk when running this script.\n"
 
@@ -86,6 +87,10 @@ echo -ne "\nInstalling base system...\n"
 pacstrap /mnt base base-devel nano vim neovim networkmanager lvm2 cryptsetup grub efibootmgr linux linux-firmware
 genfstab -U /mnt > /mnt/etc/fstab
 
+echo -ne "\nDownloading chroot setup script in /mnt...\n"
+curl -o /mnt/1-chroot_setup.sh "https://raw.githubusercontent.com/lolo8vbdjsk81a/archinstall_encrypt/main/1-chroot_setup.sh"
+chmod +x /mnt/1-chroot_setup.sh
+
 # Execute chroot script
 echo -ne "\nEntering chroot environment...\n"
-arch-chroot /mnt
+arch-chroot /mnt ./1-chroot_setup.sh
