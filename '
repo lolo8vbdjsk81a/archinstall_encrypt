@@ -22,16 +22,15 @@ fi
 
 ########## Partitioning ##########
 echo "Clearing partition table..."
-umount -AR /mnt 2>/dev/null || true
 sgdisk -Z "${DISK}"			# zap (destroy)
 sgdisk -a 2048 -o ${DISK}	# 2048 is optimal alignment
 
 echo "Creating partitions..."
 swap_=$(free -g | awk '/^Mem:/{print $2}')
-sgdisk -n 1::+512M -t 1:ef00 -c 1:'EFIBOOT' "${DISK}" # EFI
+sgdisk -n 1::+512M --typecode=ef00 --change-name=1:'EFIBOOT' "${DISK}" # EFI
 sgdisk -A 1:set:2 ${DISK}
-sgdisk -n 2::+4G -t 2:8200 -c 2:'SWAP' "${DISK}" # SWAP
-sgdisk -n 3::-0 -t 3:8300 -c 3:'ROOT' "${DISK}" # ROOT
+sgdisk -n 2::+4G --typecode=8200 --change-name=2:'SWAP' "${DISK}" # SWAP
+sgdisk -n 3::-0 --typecode=8300 --change-name=3:'ROOT' "${DISK}" # ROOT
 partprobe "${DISK}"
 
 if [[ "${DISK}" =~ "nvme" ]]; then
