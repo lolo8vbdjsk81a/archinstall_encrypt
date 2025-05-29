@@ -88,4 +88,4 @@ genfstab -U /mnt > /mnt/etc/fstab
 
 # Execute chroot script
 echo -ne "\nEntering chroot environment...\n"
-arch-chroot /mnt ./1-chroot_setup.sh
+arch-chroot /mnt

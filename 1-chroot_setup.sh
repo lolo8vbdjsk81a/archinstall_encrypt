@@ -68,7 +68,7 @@ mkinitcpio -P
 
 # Grub bootloader
 grub-install --efi-directory=/boot "${DISK}"
-CRYPT_UUID=$(blkid -o value -s UUID /dev/${ROOT})
+CRYPT_UUID=$(blkid -o value -s UUID ${ROOT})
 ROOT_UUID=$(blkid -o value -s UUID /dev/mapper/cryptroot)
 sed -i "s|GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet\"|GRUB_CMDLINE_LINUX_DEFAULT=\"loglevel=3 quiet cryptdevice=UUID=${CRYPT_UUID}:${CRYPT_NAME} root=UUID=${ROOT_UUID}\"|" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
