@@ -41,7 +41,7 @@ sudo pacman -S --noconfirm \
 # System Utilities
 sudo pacman -S --noconfirm \
     htop \
-    neofetch \
+    fastfetch \
     wget \
     curl \
     unzip \
