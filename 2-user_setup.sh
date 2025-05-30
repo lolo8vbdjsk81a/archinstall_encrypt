@@ -48,7 +48,8 @@ sudo pacman -S --noconfirm \
     xclip \
     tree \
     man-db \
-    man-pages
+    man-pages \
+    kitty
 
 # Tiling Window Manager (X11 or Wayland)
 echo -e "\n\e[33mDo you want your display server to be X11 or Wayland?\e[0m"
@@ -103,7 +104,6 @@ case "${display_choice}" in
             hyprland \
             waybar \
             rofi-lbonn-wayland-git \
-            kitty \
             grim \
             slurp \
             swww \
