@@ -10,8 +10,8 @@ echo -ne "\e[36m
  \___/|___/\___|_|    |____/ \___|\__|\__,_| .__/ 
                                            |_|    
 \e[0m"
-echo -e "This script does not include installing a Desktop Enviroment"
-echo -e "This script will install everythin I use on my personal Arch Linux setup"
+echo -e "This script does not include installing a Desktop Environment"
+echo -e "This script will install everything I use on my personal Arch Linux setup"
 echo -e "This script is intended for installing a minimal Arch Linux setup with a Tiling Window Manager."
 
 # Core system was already installed in first stage:
@@ -103,12 +103,14 @@ case "${display_choice}" in
 		sudo pacman -S --noconfirm \
             hyprland \
             waybar \
-            rofi-lbonn-wayland-git \
+			wofi \
             grim \
             slurp \
             swww \
             wl-clipboard \
-            xdg-desktop-portal-hyprland
+			xdg-desktop-portal-hyprland \
+			qt5-wayland \
+			qt6-wayland
         ;;
 esac
 
