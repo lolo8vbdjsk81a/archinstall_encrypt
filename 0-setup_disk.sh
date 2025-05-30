@@ -2,10 +2,19 @@
 # This script installs an arch linux system with full disk encryption.
 SCRIPT_URL="https://raw.githubusercontent.com/lolo8vbdjsk81a/archinstall_encrypt/main/"
 
+echo -ne "\e[36m
+ ____  _     _      ____       _               
+|  _ \(_)___| | __ / ___|  ___| |_ _   _ _ __  
+| | | | / __| |/ / \___ \ / _ \ __| | | | '_ \ 
+| |_| | \__ \   <   ___) |  __/ |_| |_| | |_) |
+|____/|_|___/_|\_\ |____/ \___|\__|\__,_| .__/ 
+                                        |_|    
+\e[0m"
+
 echo -ne "\nPlease make sure you have internet connection with configured disk when running this script.\n"
 
 # Input disk to install arch linux on
-echo "Please input the disk you are installing the system onto: (e.g. /dev/sda or /dev/nvme0n1p1)"
+echo "\e[33mPlease input the disk you are installing the system onto: (e.g. /dev/sda or /dev/nvme0n1)\e[0m"
 read DISK
 
 if [[ ! -b "${DISK}" ]]; then
@@ -13,7 +22,7 @@ if [[ ! -b "${DISK}" ]]; then
     exit 1
 fi
 
-echo -ne "\nWARNING: This will erase ALL data on ${DISK}. Are you sure? (Y/N) "
+echo -e "\n\e[31mWARNING: This will erase ALL data on ${DISK}. Are you sure? (Y/N)\e[0m "
 read confirm
 
 if [[ "${confirm}" != "Y" && "${confirm}" != "y" ]]; then
@@ -48,17 +57,17 @@ sgdisk -n 2::+4G -t 2:8200 -c 2:'SWAP' "${DISK}" >/dev/null && status="$((status
 sgdisk -n 3::-0 -t 3:8300 -c 3:'ROOT' "${DISK}" >/dev/null && status="$((status | OP_ROOT))"	# ROOT
 
 if [ $status -eq 63 ]; then
-	echo "All partition operations completed successfully. Status: $(printf '%06b' $status)"
+	echo -e "\e[32mAll partition operations completed successfully. Status: $(printf '%06b' $status)\e[0m"
 	partprobe "${DISK}"
 else
 	echo "Some operations failed. Status bitmap: $(printf '%06b' $status)"
 	echo "Failed operations:"
-	[ $((status & OP_ZAP)) -eq 0 ] && echo "- Disk zap failed"
-	[ $((status & OP_ALIGN)) -eq 0 ] && echo "- Alignment failed"
-	[ $((status & OP_EFI)) -eq 0 ] && echo "- EFI partition creation failed"
-	[ $((status & OP_EFI_FLAG)) -eq 0 ] && echo "- EFI flag setting failed"
-	[ $((status & OP_SWAP)) -eq 0 ] && echo "- Swap partition creation failed"
-	[ $((status & OP_ROOT)) -eq 0 ] && echo "- Root partition creation failed"
+	[ $((status & OP_ZAP)) -eq 0 ] && echo -e "\e[31m- Disk zap failed\e[0m"
+	[ $((status & OP_ALIGN)) -eq 0 ] && echo -e "\e[31m- Alignment failed\e[0m"
+	[ $((status & OP_EFI)) -eq 0 ] && echo -e "\e[31m- EFI partition creation failed\e[0m"
+	[ $((status & OP_EFI_FLAG)) -eq 0 ] && echo -e "\e[31m- EFI flag setting failed\e[0m"
+	[ $((status & OP_SWAP)) -eq 0 ] && echo -e "\e[31m- Swap partition creation failed\e[0m"
+	[ $((status & OP_ROOT)) -eq 0 ] && echo -e "\e[31m- Root partition creation failed\e[0m"
 	exit 1
 fi
 
@@ -74,7 +83,7 @@ fi
 
 # Check if partitions exists
 if [[ ! -b "${EFI}" ]] || [[ ! -b "${SWAP}" ]] || [[ ! -b "${ROOT}" ]]; then
-    echo "Error: Partitioning failed"
+    echo -e "\e[31m-Error: Partitioning failed\e[0m"
     exit 1
 fi
 
@@ -114,10 +123,12 @@ echo -ne "\nInstalling base system...\n"
 pacstrap /mnt base base-devel nano vim neovim networkmanager lvm2 cryptsetup grub efibootmgr linux linux-firmware
 genfstab -U /mnt > /mnt/etc/fstab
 
+echo -ne "\n\e[32mBase system installed successfully.\e[0m\n"
+
 echo -ne "\nDownloading chroot setup script in /mnt...\n"
 curl -o /mnt/1-chroot_setup.sh "https://raw.githubusercontent.com/lolo8vbdjsk81a/archinstall_encrypt/main/1-chroot_setup.sh"
 chmod +x /mnt/1-chroot_setup.sh
 
 # Execute chroot script
-echo -ne "\nEntering chroot environment...\n"
+echo -ne "\n\e[34mEntering chroot environment...\n\e[0m"
 arch-chroot /mnt /bin/bash -c "DISK='${DISK}' ROOT='${ROOT}' CRYPT_NAME='${CRYPT_NAME}' ./1-chroot_setup.sh"
