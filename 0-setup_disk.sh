@@ -99,7 +99,7 @@ echo -ne "\nSetting up encryption for root partition...\n"
 cryptsetup luksFormat --batch-mode "${ROOT}"
 CRYPT_NAME="cryptroot"
 
-echo "\n\e[33mThe default name for the encrypted ROOT partition is 'cryptroot', do you want to change it? (Y/N)\e[0m"
+echo -e "\n\e[33mThe default name for the encrypted ROOT partition is 'cryptroot', do you want to change it? (Y/N)\e[0m"
 read flag
 
 if [[ "${flag}" == "Y" || "${flag}" == "y" ]]; then
