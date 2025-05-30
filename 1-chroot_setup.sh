@@ -1,9 +1,9 @@
 #!/bin/bash
-echo 'Verifying variables:';
-echo 'DISK = ${DISK}';
-echo 'ROOT = ${ROOT}';
-echo 'CRYPT_NAME = ${CRYPT_NAME}';
-echo '-------------------';
+echo "Verifying variables:";
+echo "DISK = ${DISK}";
+echo "ROOT = ${ROOT}";
+echo "CRYPT_NAME = ${CRYPT_NAME}";
+echo "-------------------";
 echo "Available regions:"
 ls /usr/share/zoneinfo/
 echo "Enter your region:"
