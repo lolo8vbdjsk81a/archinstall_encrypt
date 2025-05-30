@@ -31,10 +31,9 @@ yay -Syu --noconfirm
 
 # Additional Core System
 echo -e "\n\e[33mInstalling core packages...\e[0m"
-yay -S --noconfirm \
+sudo pacman -S --noconfirm \
     linux-headers \
-    networkmanager \
-    pipewire-pulse pipewire-alsa pavucontrol \
+    pipewire-pulse pipewire-alsa pavucontrol pipewire \
     nvidia-dkms nvidia-settings
 
 # Tiling Window Manager (X11 or Wayland)
@@ -42,6 +41,18 @@ echo -e "\n\e[33mDo you want your display server to be X11 or Wayland?\e[0m"
 echo "1) X11 (with dwm)"
 echo "2) Wayland (with Hyprland)"
 read -r display_choice
+
+# System Utilities
+sudo pacman -S --noconfirm \
+    htop \
+    neofetch \
+    wget \
+    curl \
+    unzip \
+    xclip \
+    tree \
+    man-db \
+    man-pages
 
 # For X11, ask about compositor
 if [ "${display_choice}" == "1" ]; then
@@ -115,18 +126,6 @@ sudo pacman -S --noconfirm \
     zathura \
 	zathura-pdf-mupdf
 
-# System Utilities
-sudo pacman -S --noconfirm \
-    htop \
-    neofetch \
-    wget \
-    curl \
-    unzip \
-    xclip \
-    tree \
-    man-db \
-    man-pages
-
 # Input Method
 sudo pacman -S --noconfirm \
     fcitx5 \
@@ -152,7 +151,7 @@ echo -e "\n\e[33mChanging shell to zsh...\e[0m"
 chsh -s /bin/zsh
 
 # Services
-systemctl --user enable --now pipewire-pulse.service
+systemctl --user enable --now pipewire
 
 echo -e "\n\e[32mSetup complete!\e[0m"
 echo -e "You may need to reboot your system for all changes to take effect."
