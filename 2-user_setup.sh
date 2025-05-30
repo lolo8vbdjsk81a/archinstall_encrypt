@@ -19,6 +19,8 @@ echo -e "This script is intended for installing a minimal Arch Linux setup with 
 
 echo -e "\nUpdating system..."
 sudo pacman -Syu --noconfirm
+echo -e "\nSyncing package databases..."
+sudo pacman -Syy
 
 # Set up AUR helper (yay)
 echo -e "\nSetting up AUR helper (yay)..."
@@ -32,15 +34,9 @@ yay -Syu --noconfirm
 # Additional Core System
 echo -e "\n\e[33mInstalling core packages...\e[0m"
 sudo pacman -S --noconfirm \
-    linux-headers \
+    linux-lts-headers \
     pipewire-pulse pipewire-alsa pavucontrol pipewire \
-    nvidia-dkms nvidia-settings
-
-# Tiling Window Manager (X11 or Wayland)
-echo -e "\n\e[33mDo you want your display server to be X11 or Wayland?\e[0m"
-echo "1) X11 (with dwm)"
-echo "2) Wayland (with Hyprland)"
-read -r display_choice
+    nvidia-lts nvidia-settings
 
 # System Utilities
 sudo pacman -S --noconfirm \
@@ -53,6 +49,12 @@ sudo pacman -S --noconfirm \
     tree \
     man-db \
     man-pages
+
+# Tiling Window Manager (X11 or Wayland)
+echo -e "\n\e[33mDo you want your display server to be X11 or Wayland?\e[0m"
+echo "1) X11 (with dwm)"
+echo "2) Wayland (with Hyprland)"
+read -r display_choice
 
 # For X11, ask about compositor
 if [ "${display_choice}" == "1" ]; then
@@ -74,12 +76,16 @@ case "${display_choice}" in
 
 		# DWM Installation
         echo -e "\n\e[33mInstalling dwm and related tools...\e[0m"
-        wget https://dl.suckless.org/dwm/dwm-6.5.tar.gz
-		tar -xzvf dwm-6.5.tar.gz
-        cd dwm-6.5
-        sudo make clean install
-        cd ..
-        rm dwm-6.5.tar.gz
+		if wget https://dl.suckless.org/dwm/dwm-6.5.tar.gz; then
+			tar -xzvf dwm-6.5.tar.gz
+        	cd dwm-6.5
+        	sudo make clean install
+        	cd ..
+        	rm dwm-6.5.tar.gz
+		else
+		    echo -e "\e[31mFailed to download DWM\e[0m"
+		    exit 1
+		fi
 
 		# I do not use ST
 
@@ -152,6 +158,8 @@ chsh -s /bin/zsh
 
 # Services
 systemctl --user enable --now pipewire
+systemctl --user enable --now pipewire-pulse
+systemctl --user enable --now wireplumber
 
 echo -e "\n\e[32mSetup complete!\e[0m"
 echo -e "You may need to reboot your system for all changes to take effect."

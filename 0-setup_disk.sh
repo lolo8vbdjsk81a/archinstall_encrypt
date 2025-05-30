@@ -121,7 +121,7 @@ mount "${EFI}" /mnt/boot
 
 # Installation
 echo -ne "\nInstalling base system...\n"
-pacstrap /mnt base base-devel nano vim neovim networkmanager lvm2 cryptsetup grub efibootmgr linux linux-firmware
+pacstrap /mnt base base-devel nano vim neovim networkmanager lvm2 cryptsetup grub efibootmgr linux-lts linux-firmware
 genfstab -U /mnt > /mnt/etc/fstab
 
 echo -ne "\n\e[32mBase system installed successfully.\e[0m\n"
