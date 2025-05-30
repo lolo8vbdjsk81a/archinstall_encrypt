@@ -134,3 +134,14 @@ chmod +x /mnt/1-chroot_setup.sh
 # Execute chroot script
 echo -ne "\n\e[34mEntering chroot environment...\n\e[0m"
 arch-chroot /mnt /bin/bash -c "DISK='${DISK}' ROOT='${ROOT}' CRYPT_NAME='${CRYPT_NAME}' ./1-chroot_setup.sh"
+
+# This is after the chroot script has finished.
+echo -e "\n\e[32mInstallation complete! Do you want to unmount everything and reboot now? (Y/N) \e[0m"
+read -r reboot_now
+exit
+
+if [[ "${reboot_now}" == "Y" || "${reboot_now}" == "y" ]]; then
+	umount -AR /mnt
+	swapoff -a
+	reboot
+fi

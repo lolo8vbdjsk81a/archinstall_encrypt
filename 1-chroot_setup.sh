@@ -86,13 +86,3 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 # Systemctl
 systemctl enable NetworkManager
-
-echo -e "\n\e[32mInstallation complete! Do you want to unmount everything and reboot now? (Y/N) \e[0m"
-read -r reboot_now
-exit
-
-if [[ "${reboot_now}" == "Y" || "${reboot_now}" == "y" ]]; then
-	umount -AR /mnt
-	swapoff -a
-	reboot
-fi
