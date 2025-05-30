@@ -11,10 +11,10 @@ echo -ne "\e[36m
                                         |_|    
 \e[0m"
 
-echo -ne "\nPlease make sure you have internet connection with configured disk when running this script.\n"
+echo -e "\nPlease make sure you have internet connection with configured disk when running this script.\n"
 
 # Input disk to install arch linux on
-echo "\e[33mPlease input the disk you are installing the system onto: (e.g. /dev/sda or /dev/nvme0n1)\e[0m"
+echo -e "\e[33mPlease input the disk you are installing the system onto: (e.g. /dev/sda or /dev/nvme0n1)\e[0m"
 read DISK
 
 if [[ ! -b "${DISK}" ]]; then

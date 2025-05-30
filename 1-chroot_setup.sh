@@ -17,7 +17,7 @@ echo -e "\e[36mCRYPT_NAME\e[0m = ${CRYPT_NAME}";
 echo "-------------------";
 echo "Available regions:"
 ls /usr/share/zoneinfo/
-echo "\e[33mEnter your region:\e[0m"
+echo -e "\e[33mEnter your region:\e[0m"
 read -r region
 
 # For small regions
@@ -31,7 +31,7 @@ if [[ -f "/usr/share/zoneinfo/${region}" ]]; then
 elif [[ -d "/usr/share/zoneinfo/${region}" ]]; then
 	echo "Available cities in ${region}:"
 	ls "/usr/share/zoneinfo/${region}"
-	echo "\e[33mEnter city name:\e[0m"
+	echo -e "\e[33mEnter city name:\e[0m"
 	read -r city
 	# Set timezone if city file exists
 	if [[ -f "/usr/share/zoneinfo/${region}/${city}" ]]; then
@@ -46,7 +46,7 @@ echo -e "\e[33mWould you like to edit locale.gen manually? Default is 'en_US.UTF
 read -r edit_locale
 
 if [[ "${edit_locale}" == "Y" || "${edit_locale}" == "y" ]]; then
-	vim /e\e[0m\e[0m\e[0mtc/locale.gen
+	vim /etc/locale.gen
 else
 	sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
 fi
