@@ -1,4 +1,9 @@
 #!/bin/bash
+echo 'Verifying variables:';
+echo 'DISK = ${DISK}';
+echo 'ROOT = ${ROOT}';
+echo 'CRYPT_NAME = ${CRYPT_NAME}';
+echo '-------------------';
 echo "Available regions:"
 ls /usr/share/zoneinfo/
 echo "Enter your region:"
@@ -6,7 +11,7 @@ read -r region
 
 # For small regions
 if [[ -f "/usr/share/zoneinfo/${region}" ]]; then
-	ln -sf /usr/share/zoneinfo/${region}
+	ln -sf /usr/share/zoneinfo/${region} /etc/localtime
 	hwclock --systohc
 	echo "Current time for selected timezone is"
 	date
@@ -19,14 +24,14 @@ elif [[ -d "/usr/share/zoneinfo/${region}" ]]; then
 	read -r city
 	# Set timezone if city file exists
 	if [[ -f "/usr/share/zoneinfo/${region}/${city}" ]]; then
-		ln -sf /usr/share/zoneinfo/${region}/${city}
+		ln -sf /usr/share/zoneinfo/${region}/${city} /etc/localtime
 		hwclock --systohc
 		echo "Current time for selected timezone is"
 		date
 	fi
 fi
 
-echo "Would you like to edit locale.gen and locale.conf manually? Default is en_US.UTF-8 (Y/N)"
+echo "Would you like to edit locale.gen manually? Default is 'en_US.UTF-8' (Y/N)"
 read -r edit_locale
 
 if [[ "${edit_locale}" == "Y" || "${edit_locale}" == "y" ]]; then
@@ -36,12 +41,7 @@ else
 fi
 
 locale-gen
-
-if [[ "${edit_locale}" == "Y" || "${edit_locale}" == "y" ]]; then
-	vim /etc/locale.conf
-else
-	echo "LANG=en_US.UTF-8" > /etc/locale.conf
-fi
+locale | grep ^LANG= > /etc/locale.conf
 
 # Systemwide
 echo "Systemwide configuration"
@@ -63,7 +63,7 @@ useradd -m -G wheel -s /bin/bash "${USER}"
 passwd ${USER}
 
 # Edit /etc/mkinitcpio.conf
-sed -i 's/^HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block filesystems fsck)/HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt lvm2 filesystems fsck)/' /etc/mkinitcpio.conf
+sed -i 's/^HOOKS=.*$/HOOKS=(base udev autodetect microcode modconf kms keyboard keymap consolefont block encrypt lvm2 filesystems fsck)/' /etc/mkinitcpio.conf
 mkinitcpio -P
 
 # Grub bootloader

@@ -22,18 +22,45 @@ if [[ "${confirm}" != "Y" && "${confirm}" != "y" ]]; then
 fi
 
 ########## Partitioning ##########
+
+# Below have 6 sgdisk operations which each one returns a message when finished.
+# I will print one message if all 6 are successful.
+# 000000 = no operations complete
+# 111111 = all operations complete (63 in decimal)
+
+OP_ZAP=1		# 000001
+OP_ALIGN=2		# 000010
+OP_EFI=4		# 000100
+OP_EFI_FLAG=8	# 001000
+OP_SWAP=16		# 010000
+OP_ROOT=32		# 100000
+
 echo "Clearing partition table..."
 umount -AR /mnt 2>/dev/null || true
-sgdisk -Z "${DISK}"			# zap (destroy)
-sgdisk -a 2048 -o ${DISK}	# 2048 is optimal alignment
+sgdisk -Z "${DISK}" >/dev/null && status="$((status | OP_ZAP))"	# zap (destroy)
+sgdisk -a 2048 -o ${DISK} >/dev/null && status="$((status | OP_ALIGN))"	# 2048 is optimal alignment
 
 echo "Creating partitions..."
 swap_=$(free -g | awk '/^Mem:/{print $2}')
-sgdisk -n 1::+512M -t 1:ef00 -c 1:'EFIBOOT' "${DISK}" # EFI
-sgdisk -A 1:set:2 ${DISK}
-sgdisk -n 2::+4G -t 2:8200 -c 2:'SWAP' "${DISK}" # SWAP
-sgdisk -n 3::-0 -t 3:8300 -c 3:'ROOT' "${DISK}" # ROOT
-partprobe "${DISK}"
+sgdisk -n 1::+512M -t 1:ef00 -c 1:'EFIBOOT' "${DISK}" >/dev/null && status="$((status | OP_EFI))"	# EFI
+sgdisk -A 1:set:2 ${DISK} >/dev/null && status="$((status | OP_EFI_FLAG))"
+sgdisk -n 2::+4G -t 2:8200 -c 2:'SWAP' "${DISK}" >/dev/null && status="$((status | OP_SWAP))"	# SWAP
+sgdisk -n 3::-0 -t 3:8300 -c 3:'ROOT' "${DISK}" >/dev/null && status="$((status | OP_ROOT))"	# ROOT
+
+if [ $status -eq 63 ]; then
+	echo "All partition operations completed successfully. Status: $(printf '%06b' $status)"
+	partprobe "${DISK}"
+else
+	echo "Some operations failed. Status bitmap: $(printf '%06b' $status)"
+	echo "Failed operations:"
+	[ $((status & OP_ZAP)) -eq 0 ] && echo "- Disk zap failed"
+	[ $((status & OP_ALIGN)) -eq 0 ] && echo "- Alignment failed"
+	[ $((status & OP_EFI)) -eq 0 ] && echo "- EFI partition creation failed"
+	[ $((status & OP_EFI_FLAG)) -eq 0 ] && echo "- EFI flag setting failed"
+	[ $((status & OP_SWAP)) -eq 0 ] && echo "- Swap partition creation failed"
+	[ $((status & OP_ROOT)) -eq 0 ] && echo "- Root partition creation failed"
+	exit 1
+fi
 
 if [[ "${DISK}" =~ "nvme" ]]; then
     EFI="${DISK}p1"
@@ -93,4 +120,4 @@ chmod +x /mnt/1-chroot_setup.sh
 
 # Execute chroot script
 echo -ne "\nEntering chroot environment...\n"
-arch-chroot /mnt ./1-chroot_setup.sh
+arch-chroot /mnt /bin/bash -c "DISK='${DISK}' ROOT='${ROOT}' CRYPT_NAME='${CRYPT_NAME}' ./1-chroot_setup.sh"
