@@ -1,6 +1,5 @@
 #!/bin/bash
 # This script installs an EFI arch linux system with full disk encryption.
-SCRIPT_URL="https://raw.githubusercontent.com/lolo8vbdjsk81a/archinstall_encrypt/main/"
 
 echo -ne "\e[36m
  ____  _     _      ____       _               
@@ -100,7 +99,7 @@ echo -ne "\nSetting up encryption for root partition...\n"
 cryptsetup luksFormat --batch-mode "${ROOT}"
 CRYPT_NAME="cryptroot"
 
-echo "The default name for the encrypted ROOT partition is 'cryptroot', do you want to change it? (Y/N)"
+echo "\n\e[33mThe default name for the encrypted ROOT partition is 'cryptroot', do you want to change it? (Y/N)\e[0m"
 read flag
 
 if [[ "${flag}" == "Y" || "${flag}" == "y" ]]; then
@@ -127,17 +126,19 @@ genfstab -U /mnt > /mnt/etc/fstab
 
 echo -ne "\n\e[32mBase system installed successfully.\e[0m\n"
 
-echo -ne "\nDownloading chroot setup script in /mnt...\n"
-curl -o /mnt/1-chroot_setup.sh "https://raw.githubusercontent.com/lolo8vbdjsk81a/archinstall_encrypt/main/1-chroot_setup.sh"
-chmod +x /mnt/1-chroot_setup.sh
+STEP1="1-chroot_setup.sh"
+
+echo -ne "\n\e[34mDownloading chroot setup script in /mnt...\n\e[0m"
+curl -o /mnt/${STEP1} "https://raw.githubusercontent.com/lolo8vbdjsk81a/archinstall_encrypt/main/${STEP1}"
+chmod +x /mnt/${STEP1}
 
 # Execute chroot script
-echo -ne "\n\e[34mEntering chroot environment...\n\e[0m"
-arch-chroot /mnt /bin/bash -c "DISK='${DISK}' ROOT='${ROOT}' CRYPT_NAME='${CRYPT_NAME}' ./1-chroot_setup.sh"
+echo -ne "\n\e[33mEntering chroot environment...\n\e[0m"
+arch-chroot /mnt /bin/bash -c "DISK='${DISK}' ROOT='${ROOT}' CRYPT_NAME='${CRYPT_NAME}' ./${STEP1}"
 
 # This is after the chroot script has finished.
 echo "Removing chroot setup script..."
-rm /mnt/1-chroot_setup.sh
+rm /mnt/${STEP1}
 
 echo -e "\n\e[32mInstallation complete! Do you want to unmount everything and reboot now? (Y/N) \e[0m"
 read -r reboot_now

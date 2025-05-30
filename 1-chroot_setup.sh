@@ -1,5 +1,5 @@
 #!/bin/bash
-echo -ne "\n\e[32mEntered chroot environment, running second stage setup...\e[0m\n"
+echo -ne "\n\e[33mEntered chroot environment, running second stage setup...\e[0m\n"
 echo -ne "\e[36m
   ____ _                     _     ____       _               
  / ___| |__  _ __ ___   ___ | |_  / ___|  ___| |_ _   _ _ __  
@@ -64,7 +64,13 @@ echo -e "\e[33mPlease enter your ROOT Password\e[0m"
 passwd
 
 # Uncomment wheel group
+echo -e "\nUncommenting wheel group..."
 sed -i 's/^#\s*\(%wheel\s\+ALL=(ALL:ALL)\s\+ALL\)/\1/' /etc/sudoers
+
+# Enable multilib
+echo -e "\nEnabling multilib repository..."
+sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
+pacman -Sy --noconfirm
 
 # User
 echo -e "\n\e[36mUser configuration\e[0m"
@@ -86,3 +92,14 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 # Systemctl
 systemctl enable NetworkManager
+
+# Prepare for the next stage
+echo -e "Do you want to download the personal setup script for the next stage? (Y/N)"
+read -r download_script
+if [[ "${download_script}" == "Y" || "${download_script}" == "y" ]]; then
+	STEP2="2-user_setup.sh"
+	echo -ne "\n\e[34mDownloading user setup script\n\e[0m"
+	curl -o /home/${USER}/${STEP2} "https://raw.githubusercontent.com/lolo8vbdjsk81a/archinstall_encrypt/main/${STEP2}"
+	chmod +x /home/${USER}/${STEP2}
+	chown ${USER}:${USER} /home/${USER}/${STEP2}
+fi
