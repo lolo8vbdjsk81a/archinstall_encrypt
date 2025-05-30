@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script installs an arch linux system with full disk encryption.
+# This script installs an EFI arch linux system with full disk encryption.
 SCRIPT_URL="https://raw.githubusercontent.com/lolo8vbdjsk81a/archinstall_encrypt/main/"
 
 echo -ne "\e[36m
@@ -11,7 +11,9 @@ echo -ne "\e[36m
                                         |_|    
 \e[0m"
 
-echo -e "\nPlease make sure you have internet connection with configured disk when running this script.\n"
+echo -e "This script will install Arch Linux with full disk encryption."
+echo -e "Note: This script only supports UEFI systems with GPT partitioning.\n"
+echo -e "\n\e[33mPlease make sure you have internet connection with configured disk when running this script.\n\e[0m"
 
 # Input disk to install arch linux on
 echo -e "\e[33mPlease input the disk you are installing the system onto: (e.g. /dev/sda or /dev/nvme0n1)\e[0m"
