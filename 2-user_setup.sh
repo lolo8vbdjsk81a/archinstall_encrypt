@@ -130,8 +130,9 @@ sudo pacman -S --noconfirm \
     thunderbird \
     discord \
     keepassxc \
-    obsidian \
     mpv \
+    obsidian \
+	veracrypt \
     zathura \
 	zathura-pdf-mupdf
 
@@ -155,7 +156,12 @@ sudo pacman -S --noconfirm \
     zsh \
     zsh-syntax-highlighting
 
-yay -S zsh-git-prompt
+yay -S zsh-git-prompt --noconfirm
+
+# For neovim
+git clone --depth 1 https://github.com/wbthomason/packer.nvim\
+ ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+sudo pacman -S --noconfirm tree-sitter-cli
 
 # Change shell to zsh
 echo -e "\n\e[33mChanging shell to zsh...\e[0m"
