@@ -36,7 +36,8 @@ echo -e "\n\e[33mInstalling core packages...\e[0m"
 sudo pacman -S --noconfirm \
     linux-lts-headers \
     pipewire-pulse pipewire-alsa pavucontrol pipewire \
-    nvidia-lts nvidia-settings
+    nvidia-lts nvidia-settings \
+	stow
 
 # System Utilities
 sudo pacman -S --noconfirm \

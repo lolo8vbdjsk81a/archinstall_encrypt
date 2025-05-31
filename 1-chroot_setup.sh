@@ -21,20 +21,20 @@ echo -e "\e[33mEnter your region:\e[0m"
 read -r region
 
 # For small regions
-if [[ -f "/usr/share/zoneinfo/${region}" ]]; then
+if [ -f "/usr/share/zoneinfo/${region}" ]; then
 	ln -sf /usr/share/zoneinfo/${region} /etc/localtime
 	hwclock --systohc
 	echo "Current time for selected timezone is"
 	date
 
 # For big regions with cities
-elif [[ -d "/usr/share/zoneinfo/${region}" ]]; then
+elif [ -d "/usr/share/zoneinfo/${region}" ]; then
 	echo "Available cities in ${region}:"
 	ls "/usr/share/zoneinfo/${region}"
 	echo -e "\e[33mEnter city name:\e[0m"
 	read -r city
 	# Set timezone if city file exists
-	if [[ -f "/usr/share/zoneinfo/${region}/${city}" ]]; then
+	if [ -f "/usr/share/zoneinfo/${region}/${city}" ]; then
 		ln -sf /usr/share/zoneinfo/${region}/${city} /etc/localtime
 		hwclock --systohc
 		echo "Current time for selected timezone is"
@@ -45,7 +45,7 @@ fi
 echo -e "\e[33mWould you like to edit locale.gen manually? Default is 'en_US.UTF-8' (Y/N)\e[0m"
 read -r edit_locale
 
-if [[ "${edit_locale}" == "Y" || "${edit_locale}" == "y" ]]; then
+if [ "${edit_locale}" = "Y" ] || [ "${edit_locale}" = "y" ]; then
 	vim /etc/locale.gen
 else
 	sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
@@ -96,7 +96,7 @@ systemctl enable NetworkManager
 # Prepare for the next stage
 echo -e "Do you want to download the personal setup script for the next stage? (Y/N)"
 read -r download_script
-if [[ "${download_script}" == "Y" || "${download_script}" == "y" ]]; then
+if [ "${download_script}" = "Y" ] || [ "${download_script}" == "y" ]; then
 	STEP2="2-user_setup.sh"
 	echo -ne "\n\e[34mDownloading user setup script\n\e[0m"
 	curl -o /home/${USER}/${STEP2} "https://raw.githubusercontent.com/lolo8vbdjsk81a/archinstall_encrypt/main/${STEP2}"

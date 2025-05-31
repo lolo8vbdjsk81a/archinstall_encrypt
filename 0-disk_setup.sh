@@ -18,7 +18,7 @@ echo -e "\n\e[33mPlease make sure you have internet connection with configured d
 echo -e "\e[33mPlease input the disk you are installing the system onto: (e.g. /dev/sda or /dev/nvme0n1)\e[0m"
 read DISK
 
-if [[ ! -b "${DISK}" ]]; then
+if [ ! -b "${DISK}" ]; then
     echo "Error: Disk ${DISK} not found"
     exit 1
 fi
@@ -26,7 +26,7 @@ fi
 echo -e "\n\e[31mWARNING: This will erase ALL data on ${DISK}. Are you sure? (Y/N)\e[0m "
 read confirm
 
-if [[ "${confirm}" != "Y" && "${confirm}" != "y" ]]; then
+if [ "${confirm}" != "Y" ] && [ "${confirm}" != "y" ]; then
 	echo "Aborting."
 	exit 1
 fi
@@ -83,7 +83,7 @@ else
 fi
 
 # Check if partitions exists
-if [[ ! -b "${EFI}" ]] || [[ ! -b "${SWAP}" ]] || [[ ! -b "${ROOT}" ]]; then
+if [ ! -b "${EFI}" ] || [ ! -b "${SWAP}" ] || [ ! -b "${ROOT}" ]; then
     echo -e "\e[31m-Error: Partitioning failed\e[0m"
     exit 1
 fi
@@ -102,7 +102,7 @@ CRYPT_NAME="cryptroot"
 echo -e "\n\e[33mThe default name for the encrypted ROOT partition is 'cryptroot', do you want to change it? (Y/N)\e[0m"
 read flag
 
-if [[ "${flag}" == "Y" || "${flag}" == "y" ]]; then
+if [ "${flag}" = "Y" ] || [ "${flag}" = "y" ]; then
 	echo "Enter new name for the encrypted partition:"
 	read -r CRYPT_NAME
 fi
@@ -143,7 +143,7 @@ rm /mnt/${STEP1}
 echo -e "\n\e[32mInstallation complete! Do you want to unmount everything and reboot now? (Y/N) \e[0m"
 read -r reboot_now
 
-if [[ "${reboot_now}" == "Y" || "${reboot_now}" == "y" ]]; then
+if [ "${reboot_now}" = "Y" ] || [ "${reboot_now}" = "y" ]; then
 	umount -AR /mnt
 	swapoff -a
 	reboot
