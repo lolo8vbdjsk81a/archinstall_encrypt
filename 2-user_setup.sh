@@ -155,6 +155,8 @@ sudo pacman -S --noconfirm \
     zsh \
     zsh-syntax-highlighting
 
+yay -S zsh-git-prompt
+
 # Change shell to zsh
 echo -e "\n\e[33mChanging shell to zsh...\e[0m"
 chsh -s /bin/zsh
