@@ -8,7 +8,7 @@ My custom shell script for installing Arch Linux with full disk encryption using
 
 3. Download the script in live USB environment:
    ```bash
-   wget https://raw.githubusercontent.com/lolo8vbdjsk81a/archinstall_encrypt/main/0-disk_setup.sh
+   curl -O https://raw.githubusercontent.com/lolo8vbdjsk81a/archinstall_encrypt/main/0-disk_setup.sh
    ```
 
 4. Run the script in USB live environment:
